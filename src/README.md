@@ -6,6 +6,8 @@ Uma aplicação FastAPI super simples que permite aos alunos visualizar e se ins
 
 - Visualizar todas as atividades extracurriculares disponíveis
 - Inscrever-se em atividades
+- Exibir anuncios ativos de forma dinamica no topo da interface
+- Gerenciar anuncios (criar, editar e excluir) para usuarios autenticados
 
 ## Como começar
 
@@ -31,10 +33,18 @@ Uma aplicação FastAPI super simples que permite aos alunos visualizar e se ins
 | ------ | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
 | GET    | `/activities`                                                     | Obtém todas as atividades com detalhes e número atual de participantes |
 | POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Inscreve-se em uma atividade                                         |
+| POST   | `/activities/{activity_name}/unregister?email=student@mergington.edu` | Remove um aluno de uma atividade                                  |
+| POST   | `/auth/login?username=<usuario>&password=<senha>`                | Autentica professor/gestor                                          |
+| GET    | `/auth/check-session?username=<usuario>`                         | Valida sessão por usuário                                            |
+| GET    | `/announcements/active`                                           | Lista anuncios ativos para exibicao publica                         |
+| GET    | `/announcements?teacher_username=<usuario>`                      | Lista todos os anuncios (requer autenticacao)                       |
+| POST   | `/announcements?teacher_username=<usuario>`                      | Cria anuncio (expiracao obrigatoria, inicio opcional)               |
+| PUT    | `/announcements/{announcement_id}?teacher_username=<usuario>`    | Atualiza anuncio existente (requer autenticacao)                    |
+| DELETE | `/announcements/{announcement_id}?teacher_username=<usuario>`    | Exclui anuncio existente (requer autenticacao)                      |
 
 ## Modelo de Dados
 
-A aplicação usa um modelo de dados simples com identificadores significativos:
+A aplicação usa um modelo de dados simples em MongoDB com identificadores significativos:
 
 1. **Atividades** - Usa o nome da atividade como identificador:
    - Descrição
@@ -46,4 +56,10 @@ A aplicação usa um modelo de dados simples com identificadores significativos:
    - Nome
    - Série
 
-Todos os dados são armazenados em memória, o que significa que serão resetados quando o servidor for reiniciado.
+3. **Anuncios** - Usa identificador UUID como chave:
+   - Mensagem do anuncio
+   - Data de inicio (opcional)
+   - Data de expiracao (obrigatoria)
+   - Datas de criacao e atualizacao
+
+Os dados sao persistidos no MongoDB configurado no projeto.
